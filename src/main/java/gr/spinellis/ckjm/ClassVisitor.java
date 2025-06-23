@@ -146,7 +146,6 @@ public class ClassVisitor extends org.apache.bcel.classfile.EmptyVisitor {
     void registerFieldAccess(String className, String fieldName) {
         registerCoupling(className);
         if (className.equals(getMyClassName()))
-            System.out.println("Access Field: " + fieldName);
             mFieldsUsedByMethods.get(mFieldsUsedByMethods.size() - 1).add(fieldName);
     }
 
@@ -190,8 +189,6 @@ public class ClassVisitor extends org.apache.bcel.classfile.EmptyVisitor {
                 return;
             }
         }
-
-        System.out.println("Method: " + method.getName());
 
         Type   result_type = mg.getReturnType();
         Type[] argTypes = mg.getArgumentTypes();

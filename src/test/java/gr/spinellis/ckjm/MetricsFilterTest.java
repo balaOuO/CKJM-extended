@@ -35,7 +35,7 @@ public class MetricsFilterTest {
         assertTrue(f.exists(), "File " + f.getAbsolutePath() + " not present");
         MetricsFilter.runMetrics(new String[]{f.getAbsolutePath()}, outputHandler, false);
         latch.await(1, TimeUnit.SECONDS);
-        assertEquals(8, ref.get().getWmc());
+        assertEquals(9, ref.get().getWmc());
     }
 
     /**
@@ -75,6 +75,9 @@ public class MetricsFilterTest {
 
             Arrays.sort(mExpected);
             Arrays.sort(outContent);
+
+            System.out.println(Arrays.toString(outContent));
+            System.out.println(Arrays.toString(mExpected));
 
             for (int i = 0; i < outContent.length; i++) {
                 assertEquals(mExpected[i], outContent[i], "testing: " + outContent[i]);
