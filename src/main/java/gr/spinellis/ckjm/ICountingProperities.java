@@ -16,4 +16,7 @@ public interface ICountingProperities
 
     /** Return true if the measurements should include all classes */
     public boolean includeAll();
+
+    /** Return true if calculate metrics should ignore getter and setter */
+    public boolean isIgnoreGetterAndSetter();
 }

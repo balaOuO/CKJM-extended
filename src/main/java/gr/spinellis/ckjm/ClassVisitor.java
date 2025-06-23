@@ -16,6 +16,7 @@
 
 package gr.spinellis.ckjm;
 
+import gr.spinellis.ckjm.utils.AccessorUtils;
 import gr.spinellis.ckjm.utils.LoggerHelper;
 import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.*;
@@ -145,6 +146,7 @@ public class ClassVisitor extends org.apache.bcel.classfile.EmptyVisitor {
     void registerFieldAccess(String className, String fieldName) {
         registerCoupling(className);
         if (className.equals(getMyClassName()))
+            System.out.println("Access Field: " + fieldName);
             mFieldsUsedByMethods.get(mFieldsUsedByMethods.size() - 1).add(fieldName);
     }
 
@@ -175,6 +177,21 @@ public class ClassVisitor extends org.apache.bcel.classfile.EmptyVisitor {
     @Override
     public void visitMethod(Method method) {
         MethodGen mg = new MethodGen(method, mVisitedClass.getClassName(), mPoolGen);
+
+        if (mProp.isIgnoreGetterAndSetter()) {
+            // 先檢查基本的命名規則
+            if (AccessorUtils.isPotentialGetterOrSetter(method)) {
+                // 進一步分析方法內容來確認是否為純粹的 getter/setter
+                if (AccessorUtils.isPureGetterOrSetter(mg)) {
+                    return; // 跳過純粹的 getter/setter
+                }
+            }
+            if (method.isStatic()) {
+                return;
+            }
+        }
+
+        System.out.println("Method: " + method.getName());
 
         Type   result_type = mg.getReturnType();
         Type[] argTypes = mg.getArgumentTypes();

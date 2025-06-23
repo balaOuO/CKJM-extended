@@ -54,6 +54,11 @@ public class MetricsFilter implements ICountingProperities {
      * True if the reports should only include public classes
      */
     private boolean mOnlyPublic = false;
+
+    /**
+     * True if calculate metrics should ignore getter and setter
+     */
+    private boolean mIgnoreGetterAndSetter = false;
     /**
      * The same instance of MoaClassVisitor must be used to process all class, so it must be a class field.
      */
@@ -98,6 +103,9 @@ public class MetricsFilter implements ICountingProperities {
         if (cmdParser.isArgSet("p")) {
             mf.mOnlyPublic = true;
         }
+        if (cmdParser.isArgSet("e")) {
+            mf.mIgnoreGetterAndSetter = true;
+        }
 
         CkjmOutputHandler handler;
         if (cmdParser.isArgSet("x")) {
@@ -119,6 +127,14 @@ public class MetricsFilter implements ICountingProperities {
     }
 
     /**
+     * Return true if calculate metrics should ignore getter and setter
+     */
+    @Override
+    public boolean isIgnoreGetterAndSetter() {
+        return mIgnoreGetterAndSetter;
+    }
+
+    /**
      * Return true if the measurements should include all classes
      */
     public boolean includeAll() {
@@ -131,7 +147,6 @@ public class MetricsFilter implements ICountingProperities {
      * a jarfile, followed by space, followed by a class file name.
      */
     void processClass(String clspec) {
-        int spc;
         JavaClass jc = null;
 
         if (clspec.toLowerCase().endsWith(".jar")) {
