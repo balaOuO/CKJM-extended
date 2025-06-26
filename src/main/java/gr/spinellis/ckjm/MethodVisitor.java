@@ -140,7 +140,7 @@ class MethodVisitor extends EmptyVisitor {
             cv.registerCoupling(argTypes[j]);
         cv.registerCoupling(i.getReturnType(cp));
         /* Measuring decision: measure overloaded methods separately */
-        cv.registerMethodInvocation(i.getClassName(cp), i.getMethodName(cp), argTypes);
+        cv.registerMethodInvocation(i.getClassName(cp) + "." + i.getMethodName(cp) + i.getSignature(cp), i.getClassName(cp));
     }
 
     /** Visit an instanceof instruction. */

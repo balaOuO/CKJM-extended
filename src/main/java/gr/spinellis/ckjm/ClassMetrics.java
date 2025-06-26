@@ -158,6 +158,10 @@ public class ClassMetrics {
     }
 
     /**
+     * Decrement the weighted methods count
+     */
+    public void decWmc() { mWmc--; }
+    /**
      * Return the weighted methods per class metric
      */
     public int getWmc() {

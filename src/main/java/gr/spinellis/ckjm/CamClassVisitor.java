@@ -15,10 +15,9 @@ import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
 
 /**
- *
  * @author mjureczk
  */
-public class CamClassVisitor extends AbstractClassVisitor{
+public class CamClassVisitor extends AbstractClassVisitor {
 
     final private String mThis = "this";
 
@@ -26,29 +25,37 @@ public class CamClassVisitor extends AbstractClassVisitor{
         super(container);
     }
 
-    private Set<String> getArgsTypes(Method m, JavaClass jc, ConstantPoolGen poolGen){
+    private Set<String> getArgsTypes(Method m, JavaClass jc, ConstantPoolGen poolGen) {
         Set<String> result = new HashSet<String>();
-        if( ignore(m) ){
+        if (ignore(m)) {
             return result;
         }
-        if( !m.isStatic() ){
+        if (!m.isStatic()) {
             result.add(mThis);
         }
         MethodGen mg = new MethodGen(m, jc.getClassName(), poolGen);
         Type[] args = mg.getArgumentTypes();
-        for( Type t : args ){
-            result.add( t.getSignature() );
+        for (Type t : args) {
+            result.add(t.getSignature());
         }
         return result;
     }
 
-    protected ClassMetrics getClassMetrics(JavaClass jc){
+    protected ClassMetrics getClassMetrics(JavaClass jc) {
         return mMetricsContainer.getMetrics(jc.getClassName());
     }
 
-    /** Ignores static initilizers. */
+    /**
+     * Ignores static initilizers.
+     */
     private boolean ignore(Method m) {
-        return m.getName().compareTo("<clinit>") == 0;
+        if (m.getName().compareTo("<clinit>") == 0) {
+            return true;
+        } else if (m.getName().contains("lambda$")) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override
@@ -56,23 +63,23 @@ public class CamClassVisitor extends AbstractClassVisitor{
         ConstantPoolGen poolGen = new ConstantPoolGen(jc.getConstantPool());
         Set<String> types = new HashSet<String>();
         Method[] methods = jc.getMethods();
-        double numerator=0;
-        double denominator=0;
+        double numerator = 0;
+        double denominator = 0;
 
-        for( Method m : methods ){ //collect data about method arguments
+        for (Method m : methods) { //collect data about method arguments
             types.addAll(getArgsTypes(m, jc, poolGen));
         }
 
-        for( Method m : methods ){ //count the metric
-            if( !ignore(m) ){
+        for (Method m : methods) { //count the metric
+            if (!ignore(m)) {
                 numerator += getArgsTypes(m, jc, poolGen).size();
                 denominator += types.size();
             }
         }
 
-        if( denominator == 0 ){
+        if (denominator == 0) {
             denominator = 1;
         }
-        getClassMetrics(jc).setCam(numerator/denominator);
+        getClassMetrics(jc).setCam(numerator / denominator);
     }
 }

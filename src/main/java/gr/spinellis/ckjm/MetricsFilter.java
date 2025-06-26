@@ -59,6 +59,12 @@ public class MetricsFilter implements ICountingProperities {
      * True if calculate metrics should ignore getter and setter
      */
     private boolean mIgnoreGetterAndSetter = false;
+
+    /**
+     * True if the lambda's accessed elements should be merged into the method's context
+     */
+    private boolean mMergeLambdaAccessIntoMethods = false;
+
     /**
      * The same instance of MoaClassVisitor must be used to process all class, so it must be a class field.
      */
@@ -106,7 +112,9 @@ public class MetricsFilter implements ICountingProperities {
         if (cmdParser.isArgSet("e")) {
             mf.mIgnoreGetterAndSetter = true;
         }
-
+        if (cmdParser.isArgSet("l")) {
+            mf.mMergeLambdaAccessIntoMethods = true;
+        }
         CkjmOutputHandler handler;
         if (cmdParser.isArgSet("x")) {
             handler = new PrintXmlResults(new PrintStream(System.out));
@@ -132,6 +140,14 @@ public class MetricsFilter implements ICountingProperities {
     @Override
     public boolean isIgnoreGetterAndSetter() {
         return mIgnoreGetterAndSetter;
+    }
+
+    /**
+     * Return true if the lambda's accessed elements should be merged into the method's context
+     */
+    @Override
+    public boolean isMergeLambdaAccessIntoMethods() {
+        return mMergeLambdaAccessIntoMethods;
     }
 
     /**

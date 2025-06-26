@@ -1,84 +1,73 @@
 package gr.spinellis.ckjm.utils;
 
+import com.sun.source.tree.Tree;
+import gr.spinellis.ckjm.ClassMetrics;
+import gr.spinellis.ckjm.TreeSetWithId;
 import org.apache.bcel.classfile.Method;
+import org.apache.bcel.generic.ConstantPoolGen;
 import org.apache.bcel.generic.Instruction;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 
+import java.util.*;
+
 
 public class LambdaUtils {
-
-    public static boolean isLambdaMethod(Method method) {
-        String methodName = method.getName();
-        if (isLambdaMethodName(methodName)) {
-            return isLambdaModifiers(method);
+    public static void removeLambdas(
+            List<TreeSetWithId<String>> mFieldsUsedByMethods,
+            List<TreeSetWithId<String>> mMethodsUsedByMethods,
+            ClassMetrics mClassMetrics,
+            HashSet<String> mResponseSet,
+            String className
+    ) {
+        // 建立一個 map 方便查找 id 對應的 TreeSetWithId
+        Map<String, TreeSetWithId<String>> fieldMap = new HashMap<>();
+        Map<String, TreeSetWithId<String>> methodMap = new HashMap<>();
+        for (TreeSetWithId<String> ts : mFieldsUsedByMethods) {
+            fieldMap.put(ts.getId(), ts);
         }
-        return false;
-    }
-
-    public static boolean isLambdaMethodAdvanced(Method method, MethodGen mg) {
-        if (!isLambdaMethod(method)) return false;
-        try {
-            return hasLambdaCharacteristics(mg);
-        } catch (Exception e) {
-            return isLambdaMethod(method);
+        for (TreeSetWithId<String> ts : mMethodsUsedByMethods) {
+            methodMap.put(ts.getId(), ts);
         }
-    }
 
-    public static boolean isLambdaMethodName(String methodName) {
-        if (methodName.startsWith("lambda$")) {
-            int lastDollar = methodName.lastIndexOf('$');
-            if (lastDollar > 7) {
-                String suffix = methodName.substring(lastDollar + 1);
-                try {
-                    Integer.parseInt(suffix);
-                    return true;
-                } catch (NumberFormatException ignored) {
-                }
+        for (TreeSetWithId<String> mFieldsUsedByMethod : fieldMap.values()) {
+            String methodId = mFieldsUsedByMethod.getId();
+            if (!methodId.startsWith("lambda$")) continue; // 只處理 lambda
+
+            // 解析 lambda$run$0(I)V → 找到 run(I)V
+            String outerId = extractOuterMethodIdFromLambda(methodId, mMethodsUsedByMethods);
+            TreeSetWithId<String> fieldsUsed = fieldMap.get(methodId);
+            TreeSetWithId<String> methodsUsed = methodMap.get(methodId);
+            String lambdaId = mFieldsUsedByMethod.getId();
+
+            if (outerId != null && fieldMap.containsKey(outerId)) {
+                TreeSetWithId<String> original = fieldMap.get(outerId);
+                original.addAll(fieldsUsed);
+                mFieldsUsedByMethods.removeIf((m) -> m.getId().equals(lambdaId));
+                mResponseSet.remove(className + "." + lambdaId);
+                mClassMetrics.decWmc();
+            }
+            if (outerId != null && methodMap.containsKey(outerId)) {
+                TreeSetWithId<String> original = methodMap.get(outerId);
+                original.addAll(methodsUsed);
+                mMethodsUsedByMethods.removeIf((m) -> m.getId().equals(lambdaId));
             }
         }
-        return false;
     }
 
-    public static boolean isLambdaModifiers(Method method) {
-        return method.isPrivate() && method.isSynthetic();
-    }
+    private static String extractOuterMethodIdFromLambda(String lambdaName, List<TreeSetWithId<String>> mMethodsUsedByMethods) {
+        // lambda$run$0 → run
+        int start = "lambda$".length();
+        int end = lambdaName.lastIndexOf('$');
+        if (end <= start) return null;
+        String methodName = lambdaName.substring(start, end);  // e.g. "run"
 
-    public static boolean hasLambdaCharacteristics(MethodGen mg) {
-        InstructionList il = mg.getInstructionList();
-        if (il == null) return false;
-        Instruction[] instructions = il.getInstructions();
-        if (instructions.length > 50) return false;
-
-        int complexInstructionCount = 0;
-        for (Instruction instr : instructions) {
-            if (isComplexInstruction(instr.getOpcode())) {
-                complexInstructionCount++;
+        // 找出對應的 TreeSetWithId，其 id 是 methodName 開頭的
+        for (TreeSetWithId<String> ts : mMethodsUsedByMethods) {
+            if (ts.getId().startsWith(methodName)) {
+                return ts.getId(); // e.g. "run()Ljava/util/List;"
             }
         }
-        return complexInstructionCount <= 3;
-    }
-
-    private static boolean isComplexInstruction(short opcode) {
-        return switch (opcode) {
-            case org.apache.bcel.Const.NEW,
-                 org.apache.bcel.Const.NEWARRAY,
-                 org.apache.bcel.Const.ANEWARRAY,
-                 org.apache.bcel.Const.MULTIANEWARRAY,
-                 org.apache.bcel.Const.ATHROW,
-                 org.apache.bcel.Const.CHECKCAST,
-                 org.apache.bcel.Const.INSTANCEOF,
-                 org.apache.bcel.Const.MONITORENTER,
-                 org.apache.bcel.Const.MONITOREXIT -> true;
-            default -> false;
-        };
-    }
-
-    public static boolean isMethodReference(Method method) {
-        return isLambdaMethodName(method.getName());
-    }
-
-    public static boolean shouldSkipLambdaMethod(Method method, MethodGen mg) {
-        return isLambdaMethodAdvanced(method, mg);
+        return null;
     }
 }

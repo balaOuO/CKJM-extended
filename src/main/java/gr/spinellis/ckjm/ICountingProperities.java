@@ -19,4 +19,6 @@ public interface ICountingProperities
 
     /** Return true if calculate metrics should ignore getter and setter */
     public boolean isIgnoreGetterAndSetter();
+
+    public boolean isMergeLambdaAccessIntoMethods();
 }
