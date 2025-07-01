@@ -208,7 +208,7 @@ public class MetricsFilter implements ICountingProperities {
             mMoaVisitor.visitJavaClass(jc);
             MfaClassVisitor mfaVisitor = new MfaClassVisitor(mMetricsContainer);
             mfaVisitor.visitJavaClass(jc);
-            CamClassVisitor camVisitor = new CamClassVisitor(mMetricsContainer);
+            CamClassVisitor camVisitor = new CamClassVisitor(mMetricsContainer, this);
             camVisitor.visitJavaClass(jc);
             IcAndCbmClassVisitor icVisitor = new IcAndCbmClassVisitor(mMetricsContainer);
             icVisitor.visitJavaClass(jc);

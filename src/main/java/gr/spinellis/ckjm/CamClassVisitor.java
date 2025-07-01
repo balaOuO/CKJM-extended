@@ -20,9 +20,11 @@ import org.apache.bcel.generic.Type;
 public class CamClassVisitor extends AbstractClassVisitor {
 
     final private String mThis = "this";
+    final private ICountingProperities mProp;
 
-    public CamClassVisitor(IClassMetricsContainer container) {
+    public CamClassVisitor(IClassMetricsContainer container, ICountingProperities prop) {
         super(container);
+        this.mProp = prop;
     }
 
     private Set<String> getArgsTypes(Method m, JavaClass jc, ConstantPoolGen poolGen) {
@@ -51,7 +53,7 @@ public class CamClassVisitor extends AbstractClassVisitor {
     private boolean ignore(Method m) {
         if (m.getName().compareTo("<clinit>") == 0) {
             return true;
-        } else if (m.getName().contains("lambda$")) {
+        } else if (m.getName().contains("lambda$") && this.mProp.isMergeLambdaAccessIntoMethods()) {
             return true;
         } else {
             return false;
