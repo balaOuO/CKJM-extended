@@ -39,24 +39,30 @@ public class MethodCoupling implements Comparable<MethodCoupling>{
         return mClassA+"."+mMethodA+" is coupled to "+mClassB+"."+mMethodB;
     }
 
+    // 如果是無向耦合關係（A-B 等同於 B-A），使用以下版本：
     public int compareTo(MethodCoupling mc) {
-        int res=0;
+        // 標準化順序：確保較小的在前面
+        String thisClass1 = mClassA.compareTo(mClassB) <= 0 ? mClassA : mClassB;
+        String thisClass2 = mClassA.compareTo(mClassB) <= 0 ? mClassB : mClassA;
+        String thisMethod1 = mClassA.compareTo(mClassB) <= 0 ? mMethodA : mMethodB;
+        String thisMethod2 = mClassA.compareTo(mClassB) <= 0 ? mMethodB : mMethodA;
 
-        res = mClassA.compareTo( mc.getClassB() );
-        res += mClassB.compareTo( mc.getClassA() );
-        res += mMethodA.compareTo( mc.getMethodB() );
-        res += mMethodB.compareTo( mc.getMethodA() );
+        String otherClass1 = mc.getClassA().compareTo(mc.getClassB()) <= 0 ? mc.getClassA() : mc.getClassB();
+        String otherClass2 = mc.getClassA().compareTo(mc.getClassB()) <= 0 ? mc.getClassB() : mc.getClassA();
+        String otherMethod1 = mc.getClassA().compareTo(mc.getClassB()) <= 0 ? mc.getMethodA() : mc.getMethodB();
+        String otherMethod2 = mc.getClassA().compareTo(mc.getClassB()) <= 0 ? mc.getMethodB() : mc.getMethodA();
 
-        if( res == 0 ){
-            return res;
-        }
+        // 比較標準化後的值
+        int result = thisClass1.compareTo(otherClass1);
+        if (result != 0) return result;
 
-        res = mClassA.compareTo( mc.getClassA() );
-        res += mClassB.compareTo( mc.getClassB() );
-        res += mMethodA.compareTo( mc.getMethodA() );
-        res += mMethodB.compareTo( mc.getMethodB() );
+        result = thisClass2.compareTo(otherClass2);
+        if (result != 0) return result;
 
-        return res;
+        result = thisMethod1.compareTo(otherMethod1);
+        if (result != 0) return result;
+
+        return thisMethod2.compareTo(otherMethod2);
     }
 
     /**

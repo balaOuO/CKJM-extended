@@ -42,4 +42,12 @@ public class MethodCouplingTest {
         assertEquals( 0, mc4.compareTo(mc2), "Compare - equal" );
     }
 
+    @Test
+    public void testCompareToBug() {
+        MethodCoupling mc1 = new MethodCoupling("Child", "run", "tICAndCBM", "step1");
+        MethodCoupling mc2 = new MethodCoupling("Child", "runReverse", "tICAndCBM", "step2");
+
+        assertEquals(-7, mc1.compareTo(mc2));
+        assertEquals(7, mc2.compareTo(mc1));
+    }
 }

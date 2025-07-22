@@ -20,8 +20,9 @@ public class CamClassVisitorTest extends AbstractClassVisitorT {
     @Test
     public void testVisitJavaClass() {
         CamClassVisitor camCounter;
+        MetricsFilter mf = new MetricsFilter();
 
-        camCounter = new CamClassVisitor(mContainer);
+        camCounter = new CamClassVisitor(mContainer, mf);
         camCounter.visitJavaClass(mJavaClass1);
         camCounter.visitJavaClass(mJavaClass2);
         camCounter.visitJavaClass(mJavaClass3);
