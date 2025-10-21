@@ -44,7 +44,6 @@ public class AccessorUtils {
 
     private static boolean isPureGetter(InstructionList il) {
         Instruction[] ins = il.getInstructions();
-        if (ins.length > 5) return false;
 
         boolean hasAload0 = false, hasGetfield = false, hasReturn = false;
 
@@ -61,7 +60,6 @@ public class AccessorUtils {
 
     private static boolean isPureSetter(InstructionList il) {
         Instruction[] ins = il.getInstructions();
-        if (ins.length > 6) return false;
 
         boolean hasAload0 = false, hasLoadParam = false, hasPutfield = false, hasReturn = false;
 
