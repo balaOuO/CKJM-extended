@@ -139,9 +139,22 @@ class MethodVisitor extends EmptyVisitor {
         for (int j = 0; j < argTypes.length; j++)
             cv.registerCoupling(argTypes[j]);
         cv.registerCoupling(i.getReturnType(cp));
+
         /* Measuring decision: measure overloaded methods separately */
-        cv.registerMethodInvocation(i.getClassName(cp) + "." + i.getMethodName(cp) + i.getSignature(cp), i.getClassName(cp));
-        // FIXME i.getClassName(cp) in INVOKEDYNAMIC return method name
+        String className;
+        if (i instanceof INVOKEDYNAMIC) {
+            // For invokedynamic (lambdas, method references, string concatenation),
+            // use the current class name because i.getClassName(cp) incorrectly
+            // returns the method name instead of the class name
+            className = cv.getMyClassName();
+        } else {
+            className = i.getClassName(cp);
+        }
+
+        cv.registerMethodInvocation(
+            className + "." + i.getMethodName(cp) + i.getSignature(cp),
+            className
+        );
     }
 
     /** Visit an instanceof instruction. */
