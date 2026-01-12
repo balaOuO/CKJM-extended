@@ -87,6 +87,10 @@ public class ClassMetrics {
      */
     private Map<String, Integer> mMapCyclomaticComlpexity;
     /**
+     * Signatures of methods and values of Method's LOC
+     */
+    private Map<String, Integer> mMapMethodLoc;
+    /**
      * Data Access Metric
      */
     private double mDam;
@@ -123,6 +127,7 @@ public class ClassMetrics {
         mVisited = false;
         mAfferentCoupledClasses = new HashSet<String>();
         mMapCyclomaticComlpexity = new HashMap<String, Integer>();
+        mMapMethodLoc = new HashMap<String, Integer>();
     }
 
     /**
@@ -316,7 +321,8 @@ public class ClassMetrics {
                         " " + getIc() +
                         " " + getCbm() +
                         " " + String.format("%.4f", getAmc()) +
-                        endl + printPlainCC();
+                        endl + printPlainCC() +
+                        printPlainMethodLoc();
     }
 
     /**
@@ -393,6 +399,47 @@ public class ClassMetrics {
 
         signature = signature.split("\n")[0]; //removes throws ExceptionName from the signature
         mMapCyclomaticComlpexity.put(signature, new Integer(cc));
+    }
+
+    /**
+     * Return Method's LOC for given method
+     */
+    public int getMethodLoc(String key) {
+        Integer i = mMapMethodLoc.get(key);
+        if (i == null)
+            return 0;
+        else
+            return i;
+    }
+
+    /**
+     * Add method by signature and Method's LOC value
+     */
+    public void addMethodLoc(String signature, int loc) {
+        if (signature == null)
+            return;
+
+        signature = signature.split("\n")[0]; //removes throws ExceptionName from the signature
+        mMapMethodLoc.put(signature, new Integer(loc));
+    }
+
+    /**
+     * Return description of Method LOC metrics
+     */
+    private String printPlainMethodLoc() {
+        StringBuffer plainLoc = new StringBuffer();
+        List<String> methodNames = getMethodNames();
+        Iterator<String> itr = methodNames.iterator();
+        String name;
+
+        while (itr.hasNext()) {
+            name = itr.next();
+            plainLoc.append(" * " + name + ": ");
+            plainLoc.append(getMethodLoc(name));
+            plainLoc.append(endl);
+        }
+
+        return plainLoc.toString();
     }
 
     public double getDam() {

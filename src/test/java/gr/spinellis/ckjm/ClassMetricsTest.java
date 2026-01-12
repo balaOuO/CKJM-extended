@@ -172,4 +172,25 @@ public class ClassMetricsTest {
         cm.setDam(a);
         assertEquals(a, cm.getDam(), 0.0001, "DAM 0.17");
     }
+
+    @Test
+    public void testMethodLOC() {
+        int firstMethodLoc = 100;
+        int secondMethodLoc = 50;
+
+        assertEquals(0, cm.getMethodLoc(mFirst), "There are no methods.");
+
+        cm.addMethod(mFirst, 1);
+        cm.addMethod(mSecond, 1);
+        cm.addMethodLoc(mFirst, firstMethodLoc);
+        cm.addMethodLoc(mSecond, secondMethodLoc);
+        
+        assertEquals(firstMethodLoc, cm.getMethodLoc(mFirst), "First method LOC.");
+        assertEquals(secondMethodLoc, cm.getMethodLoc(mSecond), "Second method LOC.");
+        
+        // Also verify it appears in toString output
+        String output = cm.toString();
+        assertTrue(output.contains("* " + mFirst + ": " + firstMethodLoc));
+        assertTrue(output.contains("* " + mSecond + ": " + secondMethodLoc));
+    }
 }

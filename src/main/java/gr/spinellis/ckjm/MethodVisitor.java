@@ -49,6 +49,9 @@ class MethodVisitor extends EmptyVisitor {
         cp  = mg.getConstantPool();
         cm = cv.getMetrics();
         cm.addMethod(getMethodSignature(mg), 1);
+        if (mg.getInstructionList() != null) {
+            cm.addMethodLoc(getMethodSignature(mg), mg.getInstructionList().getLength());
+        }
     }
 
     /** Start the method's visit. */

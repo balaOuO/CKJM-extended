@@ -62,6 +62,7 @@ public class PrintXmlResults implements CkjmOutputHandler {
         p.println("\t\t<cbm>" + c.getCbm() + "</cbm>");
         p.println("\t\t<amc>" + c.getAmc() + "</amc>");
         p.println(printXmlCC(c));
+        p.println(printXmlMethodsLoc(c));
         p.println("\t</class>");
     }
 
@@ -85,5 +86,23 @@ public class PrintXmlResults implements CkjmOutputHandler {
         xmlCC.append("\t\t</cc>");
 
         return xmlCC.toString();
+    }
+
+    private String printXmlMethodsLoc(ClassMetrics cm) {
+        StringBuilder xmlLoc = new StringBuilder();
+        List<String> methodNames = cm.getMethodNames();
+        Iterator<String> itr = methodNames.iterator();
+        String name;
+
+        xmlLoc.append("\t\t<methodsLoc>").append(endl);
+        while (itr.hasNext()) {
+            name = itr.next();
+            xmlLoc.append(String.format("\t\t\t<method name=\"%s\">", name.replaceAll("<|>", "_")));
+            xmlLoc.append(cm.getMethodLoc(name));
+            xmlLoc.append("</method>").append(endl);
+        }
+        xmlLoc.append("\t\t</methodsLoc>");
+
+        return xmlLoc.toString();
     }
 }

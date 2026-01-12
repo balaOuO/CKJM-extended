@@ -49,16 +49,26 @@ public class MetricsFilterTest {
                         "KlasaTestowaParent 2 1 0 1 5 0 0 1 2 0,0000 21 1,0000 0 0,0000 0,7500 0 0 9,0000",
                         " ~ public int sru(): 1",
                         " ~ public void <init>(int id): 1",
+                        " * public int sru(): 12",
+                        " * public void <init>(int id): 6",
                         "KlasaTestowa2 5 1 0 1 11 4 1 1 0 0,4167 53 0,3333 1 0,0000 0,6250 0 0 9,0000",
                         " ~ void <init>(): 1",
                         " ~ static void <clinit>(): 1",
                         " ~ int m3(int jk): 1",
                         " ~ void m2(): 1",
                         " ~ void m1(): 2",
+                        " * void <init>(): 6",
+                        " * static void <clinit>(): 5",
+                        " * int m3(int jk): 6",
+                        " * void m2(): 3",
+                        " * void m1(): 25",
                         "KlasaTestowa 3 1 0 2 8 1 2 1 1 0,0000 115 0,0000 0 0,0000 0,5556 0 0 37,0000",
                         " ~ public void <init>(): 1",
                         " ~ void m2(String name, java.util.List list, String c): 6",
-                        " ~ void m1(): 7"
+                        " ~ void m1(): 7",
+                        " * public void <init>(): 6",
+                        " * void m2(String name, java.util.List list, String c): 25",
+                        " * void m1(): 80"
                 };
         String out = "system_out.txt";
 
@@ -119,6 +129,11 @@ public class MetricsFilterTest {
                 "\t\t\t<method name=\"void m2(String name, java.util.List list, String c)\">6</method>",
                 "\t\t\t<method name=\"void m1()\">7</method>",
                 "\t\t</cc>",
+                "\t\t<methodsLoc>",
+                "\t\t\t<method name=\"public void _init_()\">6</method>",
+                "\t\t\t<method name=\"void m2(String name, java.util.List list, String c)\">25</method>",
+                "\t\t\t<method name=\"void m1()\">80</method>",
+                "\t\t</methodsLoc>",
                 "\t</class>"};
         String out = "system_out.xml";
 
