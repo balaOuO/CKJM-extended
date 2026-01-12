@@ -109,3 +109,17 @@ buildNumber.properties
 # https://github.com/takari/maven-wrapper#usage-without-binary-jar
 .mvn/wrapper/maven-wrapper.jar
 
+### CKJM-extended specific ignores
+# Test Output files
+system_out.txt
+system_out.xml
+test_out.txt
+
+# Maven wrapper scripts
+mvnw
+mvnw.cmd
+.mvn/wrapper/
+
+# IDE - IntelliJ IDEA
+.idea/
+
