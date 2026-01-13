@@ -41,7 +41,7 @@ public class AnonymousInternAbstractClassesTest extends AbstractClassVisitorT {
         assertEquals(0, cm.getMoa(), "MOA");
         assertEquals(0, cm.getNoc(), "NOC");
         assertEquals(28, cm.getNpm(), "NPM");
-        assertEquals(31, cm.getRfc(), "RFC");
+        assertEquals(29, cm.getRfc(), "RFC");
         assertEquals(29, cm.getWmc(), "WMC - surprised why not 23? There are 29 methods in the binary code.");
     }
 

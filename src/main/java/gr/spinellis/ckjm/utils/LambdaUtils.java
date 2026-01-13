@@ -44,7 +44,9 @@ public class LambdaUtils {
                 TreeSetWithId<String> original = fieldMap.get(outerId);
                 original.addAll(fieldsUsed);
                 mFieldsUsedByMethods.removeIf((m) -> m.getId().equals(lambdaId));
-                mResponseSet.remove(className + "." + lambdaId);
+
+                mResponseSet.remove(MethodUtils.stripReturnType(className + "." + lambdaId));
+
                 mClassMetrics.decWmc();
             }
             if (outerId != null && methodMap.containsKey(outerId)) {

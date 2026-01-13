@@ -19,6 +19,7 @@ package gr.spinellis.ckjm;
 import gr.spinellis.ckjm.utils.AccessorUtils;
 import gr.spinellis.ckjm.utils.LambdaUtils;
 import gr.spinellis.ckjm.utils.LoggerHelper;
+import gr.spinellis.ckjm.utils.MethodUtils;
 import org.apache.bcel.classfile.*;
 import org.apache.bcel.generic.*;
 import org.apache.bcel.Constants;
@@ -192,7 +193,7 @@ public class ClassVisitor extends org.apache.bcel.classfile.EmptyVisitor {
      * class'fieldName RFC.
      */
     private void incRFC(String signature) {
-        mResponseSet.add(signature);
+        mResponseSet.add(MethodUtils.stripReturnType(signature));
     }
 
     /**
